@@ -107,6 +107,6 @@ Bu proje, benim için makine öğrenimi alanındaki yetkinliklerimi geliştirmem
 
 ## Linkler
 
-* [Kaggle Not Defteri Bağlantısı](https://www.kaggle.com/code/ariffurkanaytekin/work-of-akbank-bootcamp)
+* [Kaggle Not Defteri Bağlantısı](https://www.kaggle.com/code/ariffurkanaytekin/akbank-bootcamp)
 
 ---
