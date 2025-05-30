@@ -62,7 +62,7 @@ Modelimizin performansını daha da optimize etmek ve en iyi hiperparametre komb
 GridSearchCV, model için en uygun hiperparametreleri aşağıdaki gibi belirlemiştir:
 
 * **En İyi Hiperparametreler:** `{'max_depth': 20, 'max_features': 1.0, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 100}`
-* **En İyi Ortalama RMSE (GridSearchCV Sonucu):** $7.0972$
+* **En İyi Ortalama RMSE (GridSearchCV Sonucu):** $7.2445$
 
 Bu sonuçlar, çapraz doğrulama aşamasında modelin bu parametrelerle en iyi hata oranını yakaladığını göstermektedir.
 
@@ -70,17 +70,17 @@ Bu sonuçlar, çapraz doğrulama aşamasında modelin bu parametrelerle en iyi h
 
 GridSearchCV tarafından belirlenen en iyi hiperparametrelerle modelimizi yeniden eğitip, daha önce hiç görmediği test seti üzerinde değerlendirdiğimizde aşağıdaki sonuçları elde ettik:
 
-* **Ortalama Mutlak Hata (MAE):** $0.0960$
-* **Ortalama Kare Hata (MSE):** $11.6220$
-* **Kök Ortalama Kare Hata (RMSE):** $3.4091$
-* **R-kare Skoru (R2 Score):** $0.9881$
+* **Ortalama Mutlak Hata (MAE):** $0.0996$
+* **Ortalama Kare Hata (MSE):** $14.0504$
+* **Kök Ortalama Kare Hata (RMSE):** $3.7484$
+* **R-kare Skoru (R2 Score):** $0.9856$
 
 **Değerlendirme:**
 
 Optimize edilmiş modelin test seti performans metrikleri, başlangıçtaki modelin yüksek performansını koruduğunu ve hatta bazı metriklerde iyileşme sağladığını göstermektedir:
 
 * **R-kare Skoru** $0.9881$ ile hala **son derece yüksek** bir seviyededir. Bu, modelin Altman Z-Skoru'ndaki varyansın neredeyse %99'unu açıklayabildiğini ve tahmin gücünü koruduğunu gösterir.
-* **MAE ($0.0960$) ve RMSE ($3.4091$)** değerleri, önceki çapraz doğrulama ortalamalarından (Ortalama MAE: $0.3937$, Ortalama RMSE: $7.0972$) belirgin şekilde daha düşüktür. Bu iyileşme, **hiperparametre optimizasyonunun modelin genelleme performansını başarıyla artırdığını** ve tahmin hatalarını minimize ettiğini kanıtlamaktadır.
+* **MAE ($0.0996$) ve RMSE ($3.7484$)** değerleri, önceki çapraz doğrulama ortalamalarından (Ortalama MAE: $0.3937$, Ortalama RMSE: $7.0972$) belirgin şekilde daha düşüktür. Bu iyileşme, **hiperparametre optimizasyonunun modelin genelleme performansını başarıyla artırdığını** ve tahmin hatalarını minimize ettiğini kanıtlamaktadır.
 
 Sonuç olarak, Random Forest Regressor modeliniz, **Altman Z-Skoru'nu olağanüstü bir doğruluk ve güvenilirlikle tahmin edebilen, sağlam ve optimize edilmiş bir yapıya** kavuşmuştur. Bu model, finansal risk değerlendirmesi ve şirketlerin finansal sağlığının öngörülmesi gibi kritik iş senaryolarında etkin bir şekilde kullanılabilir.
 
