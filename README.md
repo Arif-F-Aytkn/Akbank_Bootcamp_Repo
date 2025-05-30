@@ -79,7 +79,7 @@ GridSearchCV tarafından belirlenen en iyi hiperparametrelerle modelimizi yenide
 
 Optimize edilmiş modelin test seti performans metrikleri, başlangıçtaki modelin yüksek performansını koruduğunu ve hatta bazı metriklerde iyileşme sağladığını göstermektedir:
 
-* **R-kare Skoru** $0.9881$ ile hala **son derece yüksek** bir seviyededir. Bu, modelin Altman Z-Skoru'ndaki varyansın neredeyse %99'unu açıklayabildiğini ve tahmin gücünü koruduğunu gösterir.
+* **R-kare Skoru** $0.9856$ ile hala **son derece yüksek** bir seviyededir. Bu, modelin Altman Z-Skoru'ndaki varyansın neredeyse %99'unu açıklayabildiğini ve tahmin gücünü koruduğunu gösterir.
 * **MAE ($0.0996$) ve RMSE ($3.7484$)** değerleri, önceki çapraz doğrulama ortalamalarından (Ortalama MAE: $0.3937$, Ortalama RMSE: $7.0972$) belirgin şekilde daha düşüktür. Bu iyileşme, **hiperparametre optimizasyonunun modelin genelleme performansını başarıyla artırdığını** ve tahmin hatalarını minimize ettiğini kanıtlamaktadır.
 
 Sonuç olarak, Random Forest Regressor modeliniz, **Altman Z-Skoru'nu olağanüstü bir doğruluk ve güvenilirlikle tahmin edebilen, sağlam ve optimize edilmiş bir yapıya** kavuşmuştur. Bu model, finansal risk değerlendirmesi ve şirketlerin finansal sağlığının öngörülmesi gibi kritik iş senaryolarında etkin bir şekilde kullanılabilir.
