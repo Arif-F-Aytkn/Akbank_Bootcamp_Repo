@@ -1,112 +1,110 @@
-# Finansal İflas Riski Tahmini: Türk Şirketleri İçin Altman Z-Skoru Regresyon Modeli
+# Financial Distress Risk Prediction: Altman Z-Score Regression Model for Turkish Companies
 
 ---
 
-## Giriş
+## Introduction
 
-Bu proje, Akbank'ın düzenlediği Global AI bootcamp kapsamında geliştirilmiştir. Amacımız, Türkiye'deki halka açık şirketlerin finansal verilerini kullanarak **Altman Z-Skoru'nu tahmin eden bir makine öğrenmesi modeli** oluşturmaktır. Altman Z-Skoru, bir şirketin finansal sağlığını ve potansiyel iflas riskini değerlendirmek için kullanılan önemli bir metriktir. Bu çalışma, bankacılık ve finans sektöründe risk yönetimi ve proaktif karar alma süreçlerine değer katmayı hedeflemektedir.
-
----
-
-## Veri Seti
-
-Çalışmada kullanılan veri seti, Kaggle üzerinden temin edilen "Audit opinions of Turkish Public Companies" adlı finansal verilerdir. Veri setine aşağıdaki bağlantıdan ulaşılabilir:
-
-[Kaggle Veri Seti Bağlantısı](https://www.kaggle.com/datasets/agrafintech/financial-data-of-turkish-public-companies)
-
-Bu veri seti, şirketlerin finansal tablolarından türetilmiş çeşitli rasyoları ve iflas tahmin skorlarını içermektedir.
+This project was developed as part of Akbank's Global AI Bootcamp. Our aim is to create a **machine learning model** that predicts the Altman Z-Score using financial data from publicly traded companies in Turkey. The Altman Z-Score is a crucial metric used to assess a company's financial health and potential bankruptcy risk. This study aims to add value to risk management and proactive decision-making processes in banking and finance.
 
 ---
 
-## Metrikler
+## Dataset
 
-Bu projede, modelin performansını ölçmek ve finansal veriler üzerindeki etkinliğini yorumlamak büyük önem taşımaktadır. Altman Z-Skoru'nun sayısal bir değer olmasından dolayı, bir **regresyon problemi** üzerinde çalıştık. Bu nedenle model performansını değerlendirmek için aşağıdaki metrikleri kullandık:
+The dataset used in this study is "Audit opinions of Turkish Public Companies" obtained from Kaggle. You can access the dataset via the following link:
 
-* **Ortalama Mutlak Hata (MAE):** Tahminlerin gerçek değerlerden ortalama mutlak sapmasını gösterir. Düşük MAE, daha doğru tahminlere işaret eder.
-* **Ortalama Kare Hata (MSE):** Hataların karelerinin ortalamasıdır. Büyük hataları daha fazla cezalandırır.
-* **Kök Ortalama Kare Hata (RMSE):** MSE'nin kareköküdür ve hatayı orijinal birimlerde ifade eder. Yorumlanması daha kolaydır.
-* **R-kare Skoru (R2 Score):** Modelin, hedef değişkendeki varyansın ne kadarını açıklayabildiğini gösterir. 0 ile 1 arasında değişir; 1'e ne kadar yakınsa model o kadar iyidir.
+[Kaggle Dataset Link](https://www.kaggle.com/datasets/agrafintech/financial-data-of-turkish-public-companies)
 
-### Problem Tanımı ve Yaklaşım Değişikliği
-
-Başlangıçta Altman Z-Skoru'nu iflas risk kategorilerine ayırarak bir **sınıflandırma problemi** olarak ele alma fikri olsa da, Z-Skorunun doğası gereği (sürekli sayısal bir değer olması) bu yaklaşımın veriyi basite indirgeyerek modelin öğrenme kapasitesini kısıtladığı anlaşıldı. Z-skorunun kendisi zaten bir risk göstergesi olduğu için, onu kategorize etmek yerine **doğrudan sayısal değerini tahmin etmek** çok daha anlamlı ve işlevsel bir yaklaşım sunmaktadır. Bu nedenle proje kapsamı, diğer finansal göstergeleri kullanarak **Altman Z-Skoru'nun sayısal değerini tahmin etmeye yönelik bir regresyon modeli** geliştirmeye odaklanmıştır. Bu değişiklik, modelin finansal veriler ve risk seviyesi arasındaki daha derinlemesine ilişkileri yakalamasına olanak tanımıştır.
-
-### Veri Ön İşleme ve Özellik Mühendisliği
-
-Veri setinde kapsamlı bir ön işleme ve özellik mühendisliği adımı izlenmiştir:
-
-* **Kategorik Değişken İşleme:** 'Periyot' sütunu ilgili ay sayısı ile etiketlenirken, 'Şirket Kodu' sütunu Label Encoding ile dönüştürülmüştür. 'Şirket Adı' sütunu, 'Şirket Kodu'nun yeterli bilgi sağlaması nedeniyle kaldırılmıştır.
-* **Eksik Değer Analizi:** 'Görüş Tipi' gibi kategorik değişkenlerdeki eksik değerlerin model için anlamlılığı değerlendirilmiş, genel veri dağılımına etkisi göz önünde bulundurulmuştur.
-* **Aykırı Değer Analizi ve Kararı:** Finansal verilerde yaygın olan aykırı değerler, Boxplot görselleştirmeleriyle tespit edilmiştir. Bu değerlerin verinin doğal yapısından kaynaklandığı ve finansal risk açısından anlamlı olabileceği düşünülerek, aykırı değerleri veri setinde **tutma kararı** alınmıştır. Bu yaklaşım, aykırı değerlere dayanıklı regresyon modellerinin tercih edilmesiyle desteklenmiştir.
-* **Veri Dağılımı ve Çarpıklık:** Finansal oranlardaki belirgin sağa çarpıklıklar ve yüksek varyanslar da verinin doğal bir özelliği olarak kabul edilmiştir. Bu nedenle, modelin yorumlanabilirliğini korumak ve önemli finansal sinyalleri kaybetmemek adına **herhangi bir değişken dönüştürme işlemi yapılmamıştır.**
-* **Korelasyon Analizi ve Özellik Seçimi:** Altman Z-Skoru ile diğer değişkenler arasındaki korelasyonlar incelenmiştir. Likidite oranlarının (Cari Oran, Asit Test Oranı, Nakit Oranı) pozitif korelasyon gösterdiği, diğer bazı iflas skorlarının ise negatif korelasyon sergilediği tespit edilmiştir. Korelasyon katsayısı mutlak değer olarak $0.01$'den küçük olan değişkenler, modele anlamlı katkı sağlamadıkları için özellik mühendisliği aşamasında **çıkarılmıştır**. Bu sayede model daha sade ve etkili hale getirilmiştir.
-
-### Model Seçimi ve Eğitimi: Random Forest Regressor
-
-Altman Z-Skoru gibi sürekli ve geniş bir aralığa yayılan, ayrıca yüksek varyans ve aykırı değerler içeren bir hedef değişkeni tahmin etmek için **Random Forest Regressor (Rassal Orman Regresyonu)** modeli tercih edilmiştir. Bu modelin seçilme nedenleri şunlardır:
-
-* **Aykırı Değerlere Dayanıklılık:** Ağaç tabanlı bir model olduğu için aykırı değerlere karşı doğal bir sağlamlık sunar.
-* **Doğrusal Olmayan İlişkileri Yakalama:** Finansal verilerdeki karmaşık ve doğrusal olmayan ilişkileri başarıyla öğrenme yeteneğine sahiptir.
-* **Aşırı Öğrenmeye Karşı Direnç:** Birden fazla karar ağacını birleştirerek aşırı öğrenmeyi azaltır ve genellenebilirliği artırır.
-
-Model eğitimi için, özellikler (`X`) olarak korelasyon analizinde belirlenen anlamlı değişkenler kullanılmış, hedef değişken (`y`) ise doğrudan **Altman Z-Skoru'nun sayısal değeri** olmuştur.
-
-### Model Değerlendirmesi ve Optimizasyonu
-
-Başlangıçta geliştirdiğimiz Random Forest regresyon modelinin oldukça yüksek bir performans gösterdiğini görmüştük. Tekil test setinde $0.9903$ gibi etkileyici bir R-kare skoru elde etmiş, ardından çapraz doğrulama ile bu performansın genellenebilirliğini ($0.9693$ Ortalama R-kare) teyit etmiştik. Bu sonuçlar, modelin Altman Z-Skoru'nu güvenilir bir şekilde tahmin ettiğini göstermişti.
-
-Modelimizin performansını daha da optimize etmek ve en iyi hiperparametre kombinasyonunu bulmak amacıyla **GridSearchCV** yöntemini kullandık. Bu işlem, tanımladığımız parametre aralıkları içinde en iyi performansı (en düşük RMSE) veren kombinasyonu sistematik olarak aramıştır.
-
-**GridSearchCV Sonuçları:**
-
-GridSearchCV, model için en uygun hiperparametreleri aşağıdaki gibi belirlemiştir:
-
-* **En İyi Hiperparametreler:** `{'max_depth': 20, 'max_features': 1.0, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 100}`
-* **En İyi Ortalama RMSE (GridSearchCV Sonucu):** $7.2445$
-
-Bu sonuçlar, çapraz doğrulama aşamasında modelin bu parametrelerle en iyi hata oranını yakaladığını göstermektedir.
-
-**Optimize Edilmiş Modelin Nihai Test Seti Performansı:**
-
-GridSearchCV tarafından belirlenen en iyi hiperparametrelerle modelimizi yeniden eğitip, daha önce hiç görmediği test seti üzerinde değerlendirdiğimizde aşağıdaki sonuçları elde ettik:
-
-* **Ortalama Mutlak Hata (MAE):** $0.0996$
-* **Ortalama Kare Hata (MSE):** $14.0504$
-* **Kök Ortalama Kare Hata (RMSE):** $3.7484$
-* **R-kare Skoru (R2 Score):** $0.9856$
-
-**Değerlendirme:**
-
-Optimize edilmiş modelin test seti performans metrikleri, başlangıçtaki modelin yüksek performansını koruduğunu ve hatta bazı metriklerde iyileşme sağladığını göstermektedir:
-
-* **R-kare Skoru** $0.9856$ ile hala **son derece yüksek** bir seviyededir. Bu, modelin Altman Z-Skoru'ndaki varyansın neredeyse %99'unu açıklayabildiğini ve tahmin gücünü koruduğunu gösterir.
-* **MAE ($0.0996$) ve RMSE ($3.7484$)** değerleri, önceki çapraz doğrulama ortalamalarından (Ortalama MAE: $0.3937$, Ortalama RMSE: $7.0972$) belirgin şekilde daha düşüktür. Bu iyileşme, **hiperparametre optimizasyonunun modelin genelleme performansını başarıyla artırdığını** ve tahmin hatalarını minimize ettiğini kanıtlamaktadır.
-
-Sonuç olarak, Random Forest Regressor modeliniz, **Altman Z-Skoru'nu olağanüstü bir doğruluk ve güvenilirlikle tahmin edebilen, sağlam ve optimize edilmiş bir yapıya** kavuşmuştur. Bu model, finansal risk değerlendirmesi ve şirketlerin finansal sağlığının öngörülmesi gibi kritik iş senaryolarında etkin bir şekilde kullanılabilir.
+This dataset includes various financial ratios derived from company financial statements and bankruptcy prediction scores.
 
 ---
 
-## Sonuç ve Gelecek Çalışmalar
+## Metrics
 
-Bu proje kapsamında geliştirilen Random Forest regresyon modeli, Türk şirketlerinin finansal verileri üzerinden **Altman Z-Skoru'nu tahmin etmede üstün bir performans** sergilemiştir. Elde edilen yüksek R-kare skoru ve düşük hata metrikleri, modelin finansal risk değerlendirmesi için güçlü ve pratik bir araç olabileceğini göstermektedir. Bu çalışma, şirketlerin finansal sağlığını öngörmede ve potansiyel iflas risklerini proaktif olarak yönetmede bankacılık sektörüne değerli içgörüler sunabilir.
+In this project, measuring the model's performance and interpreting its effectiveness on financial data is crucial. Given that the Altman Z-Score is a numerical value, we approached this as a **regression problem**. Therefore, we used the following metrics to evaluate model performance:
 
-### Gelecek Çalışmalar İçin Vizyon
+* **Mean Absolute Error (MAE):** Indicates the average absolute deviation of predictions from actual values. A lower MAE indicates more accurate predictions.
+* **Mean Squared Error (MSE):** Represents the average of the squared errors. It penalizes larger errors more significantly.
+* **Root Mean Squared Error (RMSE):** The square root of MSE, expressed in the original units of the target variable, making it easier to interpret.
+* **R-squared Score (R2 Score):** Indicates how much variance in the target variable the model can explain. It ranges from 0 to 1; the closer to 1, the better the model.
 
-Bu proje, bir başlangıç noktası olup gelecekte birçok yönde geliştirilebilir:
+### Problem Definition and Approach Change
 
-* **Dinamik Veri Toplama:** Mevcut statik veri setini dinamik, gerçek zamanlı finansal veri akışlarıyla entegre ederek modelin sürekli güncel kalmasını sağlamak. Bu, API'lar aracılığıyla borsadan veya finansal veri sağlayıcılardan otomatik veri çekmeyi içerebilir.
-* **Model Genişletme:** Sadece Altman Z-Skoru değil, Springate, Zmijewski gibi diğer iflas skorlarını da tahmin eden veya bu skorları bir araya getirerek daha kapsamlı bir risk puanı oluşturan modeller geliştirmek.
-* **Derin Öğrenme Yaklaşımları:** Özellikle zaman serisi verileri için LSTM veya Transformer gibi derin öğrenme modellerini deneyerek finansal trendleri ve dinamikleri daha iyi yakalamayı hedeflemek.
-* **Arayüz Entegrasyonu:** Modelin tahminlerini kolayca erişilebilir kılmak için basit bir web arayüzü (örneğin Flask veya Streamlit kullanarak) geliştirmek. Bu, finans analistlerinin veya bankacıların anında risk değerlendirmesi yapmasına olanak tanır.
-* **Açıklanabilir Yapay Zeka (XAI):** Modelin neden belirli bir Z-Skoru tahmininde bulunduğunu açıklamak için SHAP veya LIME gibi XAI araçlarını entegre etmek. Bu, modelin güvenilirliğini ve iş birimleri tarafından benimsenmesini artıracaktır.
-* **Makroekonomik Faktörlerin Entegrasyonu:** Şirket özelindeki verilerin yanı sıra enflasyon, faiz oranları, GSYİH gibi makroekonomik göstergeleri de modele dahil ederek tahminlerin doğruluğunu ve sağlamlığını artırmak.
+Initially, there was an idea to treat the Altman Z-Score as a **classification problem** by categorizing it into bankruptcy risk categories. However, due to the continuous numerical nature of the Z-Score itself, it was realized that this approach overly simplifies the data and limits the model's learning capacity. Given that the Z-Score is already an indicator of risk, **directly predicting its numerical value** provides a more meaningful and functional approach. Therefore, the project scope shifted to developing a **regression model** to predict the numerical value of the Altman Z-Score using other financial indicators. This change allowed the model to capture deeper relationships between financial data and risk.
 
-Bu proje, benim için makine öğrenimi alanındaki yetkinliklerimi geliştirmem ve gerçek dünya problemleri üzerine uygulamalı bir bakış açısı kazanmam açısından önemli bir adımdır. Gelecekte, finansal teknolojiler (FinTech) ve yapay zeka kesişimindeki kariyer hedefime ulaşmak için bu tür projelere devam etmeyi ve öğrendiğim yeni teknolojileri entegre etmeyi planlıyorum.
+### Data Preprocessing and Feature Engineering
+
+The dataset underwent extensive preprocessing and feature engineering steps:
+
+* **Categorical Variable Handling:** The 'Period' column was labeled with relevant month counts, and the 'Company Code' column was transformed using Label Encoding. The 'Company Name' column was removed as the 'Company Code' provided sufficient information.
+* **Missing Value Analysis:** The significance of missing values in categorical variables such as 'Opinion Type' was evaluated concerning model relevance and general data distribution.
+* **Outlier Analysis and Decision:** Common outliers in financial data were identified using Boxplot visualizations. The decision was made to **retain** these outliers in the dataset based on their potential significance in financial risk assessment. This approach was supported by the use of outlier-resistant regression models.
+* **Data Distribution and Skewness:** Significant right skewness and high variances in financial ratios were accepted as natural features of the data. Therefore, no variable transformation was performed to preserve model interpretability and retain important financial signals.
+* **Correlation Analysis and Feature Selection:** Correlations between the Altman Z-Score and other variables were examined. Liquidity ratios (Current Ratio, Acid Test Ratio, Cash Ratio) showed positive correlations, while some bankruptcy scores exhibited negative correlations. Variables with correlation coefficients absolute value less than $0.01$ were **removed** during feature engineering as they did not contribute significantly to the model. This streamlined the model, making it more straightforward and effective.
+
+### Model Selection and Training: Random Forest Regressor
+
+A **Random Forest Regressor** model was chosen to predict the Altman Z-Score due to its ability to handle the continuous, wide range, high variance, and outlier-rich nature of the target variable. Reasons for choosing this model include:
+
+* **Robustness to Outliers:** Being a tree-based model, it naturally provides robustness against outliers.
+* **Capturing Non-linear Relationships:** Successfully learns complex and non-linear relationships in financial data.
+* **Resistance to Overfitting:** Reduces overfitting and enhances generalizability by combining multiple decision trees.
+
+For model training, significant variables identified during correlation analysis (`X`) were used as features, while the target variable (`y`) was the **numerical value of the Altman Z-Score**.
+
+### Model Evaluation and Optimization
+
+Initially, the developed Random Forest regression model showed high performance. It achieved an impressive R-squared score of $0.9903$ on a single test set and confirmed this performance's generalizability ($0.9693$ Average R-squared) through cross-validation. These results indicated that the model reliably predicted the Altman Z-Score.
+
+To further optimize model performance and find the best hyperparameter combination, we used **GridSearchCV**. This process systematically searched for the best performance (lowest RMSE) within defined parameter ranges.
+
+**GridSearchCV Results:**
+
+GridSearchCV determined the most suitable hyperparameters for the model as follows:
+
+* **Best Hyperparameters:** `{'max_depth': 20, 'max_features': 1.0, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 100}`
+* **Best Mean RMSE (GridSearchCV Result):** $7.2445$
+
+These results demonstrate that during cross-validation, the model achieved its best error rate with these parameters.
+
+**Optimized Model's Final Test Set Performance:**
+
+After retraining the model with the hyperparameters identified by GridSearchCV and evaluating it on a completely unseen test set, we obtained the following results:
+
+* **Mean Absolute Error (MAE):** $0.0996$
+* **Mean Squared Error (MSE):** $14.0504$
+* **Root Mean Squared Error (RMSE):** $3.7484$
+* **R-squared Score (R2 Score):** $0.9856$
+
+**Evaluation:**
+
+The performance metrics of the optimized model on the test set indicate that it maintained the high performance observed initially and even improved on some metrics:
+
+* **R-squared Score** of $0.9856$ remains **extremely high**, indicating that the model can explain nearly 99% of the variance in the Altman Z-Score and retains its predictive power.
+* **MAE ($0.0996$) and RMSE ($3.7484$)** values are significantly lower than the previous cross-validation averages (Average MAE: $0.3937$, Average RMSE: $7.0972$). This improvement demonstrates that **hyperparameter optimization successfully enhanced the model's generalization performance** and minimized prediction errors.
+
+In conclusion, your Random Forest Regressor model has evolved into a robust and optimized structure capable of **accurately and reliably predicting the Altman Z-Score**. This model can be effectively used in critical business scenarios such as financial risk assessment and forecasting potential bankruptcy risks for companies.
 
 ---
 
-## Linkler
+## Conclusion and Future Work
 
-* [Kaggle Not Defteri Bağlantısı](https://www.kaggle.com/code/ariffurkanaytekin/akbank-bootcamp)
+The Random Forest regression model developed in this project demonstrated superior performance in predicting the Altman Z-Score using financial data from Turkish companies. The high R-squared score and low error metrics indicate that the model could be a powerful tool for financial risk assessment and proactive management processes. This study provides valuable insights into predicting company financial health and managing potential bankruptcy risks in the banking sector.
+
+### Vision for Future Work
+
+This project serves as a starting point and can be further developed in several directions:
+
+* **Dynamic Data Collection:** Integrate the current static dataset with dynamic, real-time financial data streams to keep the model continuously updated. This could involve automatically fetching data from stock exchanges or financial data providers via APIs.
+* **Model Expansion:** Develop models that predict not only the Altman Z-Score but also other bankruptcy scores like Springate, Zmijewski, or combine these scores to create a comprehensive risk score.
+* **Deep Learning Approaches:** Experiment with deep learning models such as LSTM or Transformer, especially for time series data, to better capture financial trends and dynamics.
+* **Interface Integration:** Develop a simple web interface (using Flask or Streamlit, for example) to make model predictions easily accessible. This would enable financial analysts or bankers to perform instant risk assessments.
+* **Explainable AI (XAI):** Integrate XAI tools like SHAP or LIME to explain why the model made specific Altman Z-Score predictions. This would enhance the model's reliability and adoption by business units.
+* **Integration of Macroeconomic Factors:** Enhance prediction accuracy and robustness by including macroeconomic indicators such as inflation, interest rates, GDP, alongside company-specific data.
+
+This project is a significant step for me in advancing my proficiency in machine learning and gaining applied insights into real-world problems. In the future, I plan to continue working on such projects to achieve my career goal at the intersection of financial technologies (FinTech) and artificial intelligence.
 
 ---
+
+## Links
+
+* [Kaggle Notebook Link](https://www.kaggle.com/code/ariffurkanaytekin/akbank-bootcamp)
